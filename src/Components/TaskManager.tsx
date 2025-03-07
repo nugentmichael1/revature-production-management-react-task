@@ -17,11 +17,13 @@ const TaskManager: React.FC = () => {
         { id: 3, text: 'Do Laundry', completed: false },
     ]);
 
+    const [tasksFilter, setTasksFilter] = useState<string>('All Tasks');
+
     const [newTaskText, setNewTaskText] = useState<string>("");
 
     const addTask = (): void => {
         //Guard: Empty Task Text
-        if(newTaskText.trim() === "") return;
+        if (newTaskText.trim() === "") return;
 
         setTasks([...tasks,
         { id: Date.now(), text: newTaskText, completed: false }]
@@ -47,6 +49,19 @@ const TaskManager: React.FC = () => {
         setTasks(tasks.filter((task) => task.id !== id));
     }
 
+    const filterTasks = (): Task[] => {
+        switch (tasksFilter) {
+            case 'All Tasks':
+                return tasks;
+            case 'Active Tasks':
+                return tasks.filter((task) => !task.completed);
+            case 'Completed Tasks':
+                return tasks.filter((task) => task.completed);
+            default:
+                return tasks;
+        }
+    }
+
     return (
         <div className="TaskManager">
             <h1>Task Manager</h1>
@@ -59,12 +74,21 @@ const TaskManager: React.FC = () => {
                 Add Task
             </button>
             <div className='task-filters-mine'>
-                <button>All Tasks</button>
-                <button>Active Tasks</button>
-                <button>Completed Tasks</button>
+                <button
+                    onClick={() => setTasksFilter("All Tasks")}>
+                    All Tasks
+                </button>
+                <button
+                    onClick={() => setTasksFilter("Active Tasks")}>
+                    Active Tasks
+                </button>
+                <button
+                    onClick={() => setTasksFilter("Completed Tasks")}>
+                    Completed Tasks
+                </button>
             </div>
             <ul className='task-list-mine'>
-                {tasks.map((task) => (
+                {filterTasks().map((task) => (
                     <li key={task.id}
                         className={task.completed ? 'completed' : ''}>
                         <input type='checkbox'
